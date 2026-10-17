@@ -1,0 +1,15 @@
+--- a/PlayerAnmHost.hpp
++++ b/PlayerAnmHost.hpp
+@@ -1,5 +1,7 @@
+ #pragma once
+ #include "PlayerMotion.hpp"
++#include <cstdlib>
++#include <cstring>
+ #include "AnmManager.hpp"
+ namespace th15 {
+ class PlayerAnmHost final:public PlayerMotionVisuals {
+@@ -10,6 +12,7 @@
+     bool initialize(){return pose(0);}
+     bool focus_begin(bool enabled,float scale)override{
++        {static const char* e=std::getenv("TH_HITBOX");if(e&&!std::strcmp(e,"always"))enabled=true;}
+         if(!enabled){if(!animations.interrupt(focus_handle,1))return false;focus_handle=0;return true;}
