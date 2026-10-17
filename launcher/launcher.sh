@@ -6,7 +6,7 @@ HITBOX_FILE=~/.touhou_hitbox
 [ -f "$HITBOX_FILE" ] || echo off > "$HITBOX_FILE"
 draw() {
   hitbox=$(cat "$HITBOX_FILE")
-  options=("TH06 EoSD" "TH06 EoSD+ (eagler)" "TH07 PCB" "TH07 PCB+ (eagler)" "PC-98 TH01-05" "Hitbox Mode: $hitbox" "Video Player" "Exit to Console" "Reboot" "Power Off")
+  options=("TH06 EoSD" "TH06 EoSD+ (eagler)" "TH07 PCB" "TH07 PCB+ (eagler)" "TH08 IN+ (eagler-native)" "TH09 PoFV+ (eagler-native)" "TH10 MoF+ (eagler-native)" "TH11 SA+ (eagler-native)" "PC-98 TH01-05" "Hitbox Mode: $hitbox" "Video Player" "Exit to Console" "Reboot" "Power Off")
   clear
   echo "========= TOUHOU PLAYER ========="
   for i in "${!options[@]}"; do
@@ -24,7 +24,7 @@ while true; do
     read -rsn2 -t 0.1 k2
     case $k2 in
       '[A') [ $sel -gt 1 ] && sel=$((sel-1));;
-      '[B') [ $sel -lt 10 ] && sel=$((sel+1));;
+      '[B') [ $sel -lt 14 ] && sel=$((sel+1));;
     esac
   elif [[ $k == 'z' || $k == '' ]]; then
     hitbox=$(cat "$HITBOX_FILE")
@@ -33,12 +33,16 @@ while true; do
       2) (cd ~/games/th06 && TH_HITBOX=$hitbox ./th06e);;
       3) (cd ~/games/th07 && ./th07);;
       4) (cd ~/games/th07 && TH_HITBOX=$hitbox ./th07e);;
-      5) sdlnp21kai;;
-      6) case $hitbox in off) echo focus > "$HITBOX_FILE";; focus) echo always > "$HITBOX_FILE";; always) echo off > "$HITBOX_FILE";; esac;;
-      7) mpv --vo=drm --fs ~/videos/ 2>/dev/null;;
-      8) exit 0;;
-      9) sudo reboot;;
-      10) sudo poweroff;;
+      5) sudo ln -sfn ~/games/th08 /game && (cd ~/games/th08 && TH_HITBOX=$hitbox ./th08e);;
+      6) (cd ~/games/th09 && TH_HITBOX=$hitbox ./th09e);;
+      7) (cd ~/games/th10 && TH_HITBOX=$hitbox ./th10e);;
+      8) (cd ~/games/th11 && TH_HITBOX=$hitbox ./th11e);;
+      9) sdlnp21kai;;
+      10) case $hitbox in off) echo focus > "$HITBOX_FILE";; focus) echo always > "$HITBOX_FILE";; always) echo off > "$HITBOX_FILE";; esac;;
+      11) mpv --vo=drm --fs ~/videos/ 2>/dev/null;;
+      12) exit 0;;
+      13) sudo reboot;;
+      14) sudo poweroff;;
     esac
   fi
 done
