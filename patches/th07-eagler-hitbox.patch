@@ -1,1 +1,101 @@
-placeholder
+diff --git a/src/EaglerOptions.hpp b/src/EaglerOptions.hpp
+index 6617a8a..728ed09 100644
+--- a/src/EaglerOptions.hpp
++++ b/src/EaglerOptions.hpp
+@@ -4,6 +4,21 @@
+ 
+ #ifdef __EMSCRIPTEN__
+ #include <emscripten/emscripten.h>
++#else
++#include <cstdlib>
++#include <cstring>
++#endif
++
++#ifndef __EMSCRIPTEN__
++// Native (non-web) option source: TH_HITBOX env var, values: off (default) / focus / always.
++namespace eagler_native_detail
++{
++inline const char *HitboxMode()
++{
++    static const char *mode = std::getenv("TH_HITBOX");
++    return mode ? mode : "off";
++}
++}
+ #endif
+ 
+ namespace EaglerOptions
+@@ -128,7 +143,9 @@ inline bool AlwaysShowHitbox()
+ #ifdef __EMSCRIPTEN__
+     return EM_ASM_INT({ return !!Module.eaglerOptions?.alwaysHitbox; }) != 0;
+ #else
+-    return false;
++    // TH07 natively shows the hitbox while focused, so "focus" needs no override here;
++    // "always" forces it on regardless of focus state.
++    return std::strcmp(eagler_native_detail::HitboxMode(), "always") == 0;
+ #endif
+ }
+ 
+diff --git a/src/i18n.hpp b/src/i18n.hpp
+new file mode 100644
+index 0000000..ae6073f
+--- /dev/null
++++ b/src/i18n.hpp
+@@ -0,0 +1,12 @@
++#pragma once
++
++// Minimal i18n header for the native (non-Emscripten) build.
++// The upstream eagler branch references i18n.hpp from MidiAlsa.cpp but never
++// committed the file/generator for TH07, so we provide the single macro used.
++
++#define TH_LANG TH_JP
++
++// JP
++#define TH_JP_WINDOW_TITLE "\x93\x8c\x95\xfb\x97\x64\x81\x58\x96\xb2\x81\x40\x81\x60 Perfect Cherry Blossom"
++
++#define TH_WINDOW_TITLE TH_JP_WINDOW_TITLE
+diff --git a/src/utils.cpp b/src/utils.cpp
+index 82e6d20..35c92d2 100644
+--- a/src/utils.cpp
++++ b/src/utils.cpp
+@@ -2,6 +2,9 @@
+ 
+ #include "ZunMath.hpp"
+ 
++#include <cstdarg>
++#include <cstdio>
++
+ void utils::Rotate(ZunVec3 *out, ZunVec3 *point, f32 angle)
+ {
+     f32 sinAngle;
+@@ -12,3 +15,19 @@ void utils::Rotate(ZunVec3 *out, ZunVec3 *point, f32 angle)
+     out->x = cosAngle * point->x + sinAngle * point->y;
+     out->y = cosAngle * point->y - sinAngle * point->x;
+ }
++
++void utils::DebugPrint2(const char *fmt, ...)
++{
++#ifdef DEBUG
++    char tmpBuffer[512];
++    std::va_list args;
++
++    va_start(args, fmt);
++    std::vsnprintf(tmpBuffer, 511, fmt, args);
++    va_end(args);
++
++    std::printf("DEBUG2: %s\n", tmpBuffer);
++#else
++    (void)fmt;
++#endif
++}
+diff --git a/src/utils.hpp b/src/utils.hpp
+index 54eb739..357cd32 100644
+--- a/src/utils.hpp
++++ b/src/utils.hpp
+@@ -55,4 +55,7 @@ inline f32 LerpAngle(f32 from, f32 to, f32 alpha)
+ }
+ 
+ void Rotate(ZunVec3 *out, ZunVec3 *point, f32 angle);
++
++// Debug-only printf, mirroring TH06's utils::DebugPrint2 (no-op in release builds).
++void DebugPrint2(const char *fmt, ...);
+ } // namespace utils
