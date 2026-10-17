@@ -1,0 +1,10 @@
+# Auto-launch the game menu on tty1 only (SSH sessions get a normal shell).
+# The loop respawns the menu if it crashes; "Exit to Console" sets the flag
+# file so the loop breaks and drops to a real console.
+if [ -z "$SSH_CONNECTION" ] && [ "$(tty)" = "/dev/tty1" ]; then
+  while [ ! -f ~/.stay_console ]; do
+    ~/launcher.sh
+    sleep 1
+  done
+  rm -f ~/.stay_console
+fi

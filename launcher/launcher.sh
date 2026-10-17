@@ -1,6 +1,7 @@
 #!/bin/bash
 export SDL_VIDEODRIVER=kmsdrm
 cd ~
+clear
 sel=1
 HITBOX_FILE=~/.touhou_hitbox
 [ -f "$HITBOX_FILE" ] || echo off > "$HITBOX_FILE"
@@ -41,7 +42,7 @@ while true; do
       10) sdlnp21kai;;
       11) case $hitbox in off) echo focus > "$HITBOX_FILE";; focus) echo always > "$HITBOX_FILE";; always) echo off > "$HITBOX_FILE";; esac;;
       12) mpv --vo=drm --fs ~/videos/ 2>/dev/null;;
-      13) exit 0;;
+      13) touch ~/.stay_console; exit 0;;
       14) sudo reboot;;
       15) sudo poweroff;;
     esac
