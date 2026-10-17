@@ -6,7 +6,7 @@ HITBOX_FILE=~/.touhou_hitbox
 [ -f "$HITBOX_FILE" ] || echo off > "$HITBOX_FILE"
 draw() {
   hitbox=$(cat "$HITBOX_FILE")
-  options=("TH06 EoSD" "TH06 EoSD+ (eagler)" "TH07 PCB" "TH07 PCB+ (eagler)" "TH08 IN+ (eagler-native)" "TH09 PoFV+ (eagler-native)" "TH10 MoF+ (eagler-native)" "TH11 SA+ (eagler-native)" "PC-98 TH01-05" "Hitbox Mode: $hitbox" "Video Player" "Exit to Console" "Reboot" "Power Off")
+  options=("TH06 EoSD" "TH06 EoSD+ (eagler)" "TH07 PCB" "TH07 PCB+ (eagler)" "TH08 IN+ (eagler-native)" "TH09 PoFV+ (eagler-native)" "TH10 MoF+ (eagler-native)" "TH11 SA+ (eagler-native)" "TH15 LoLK+ (eagler-native)" "PC-98 TH01-05" "Hitbox Mode: $hitbox" "Video Player" "Exit to Console" "Reboot" "Power Off")
   clear
   echo "========= TOUHOU PLAYER ========="
   for i in "${!options[@]}"; do
@@ -24,7 +24,7 @@ while true; do
     read -rsn2 -t 0.1 k2
     case $k2 in
       '[A') [ $sel -gt 1 ] && sel=$((sel-1));;
-      '[B') [ $sel -lt 14 ] && sel=$((sel+1));;
+      '[B') [ $sel -lt 15 ] && sel=$((sel+1));;
     esac
   elif [[ $k == 'z' || $k == '' ]]; then
     hitbox=$(cat "$HITBOX_FILE")
@@ -37,12 +37,13 @@ while true; do
       6) (cd ~/games/th09 && TH_HITBOX=$hitbox ./th09e);;
       7) (cd ~/games/th10 && TH_HITBOX=$hitbox ./th10e);;
       8) (cd ~/games/th11 && TH_HITBOX=$hitbox ./th11e);;
-      9) sdlnp21kai;;
-      10) case $hitbox in off) echo focus > "$HITBOX_FILE";; focus) echo always > "$HITBOX_FILE";; always) echo off > "$HITBOX_FILE";; esac;;
-      11) mpv --vo=drm --fs ~/videos/ 2>/dev/null;;
-      12) exit 0;;
-      13) sudo reboot;;
-      14) sudo poweroff;;
+      9) (cd ~/games/th15 && TH_HITBOX=$hitbox ./th15e);;
+      10) sdlnp21kai;;
+      11) case $hitbox in off) echo focus > "$HITBOX_FILE";; focus) echo always > "$HITBOX_FILE";; always) echo off > "$HITBOX_FILE";; esac;;
+      12) mpv --vo=drm --fs ~/videos/ 2>/dev/null;;
+      13) exit 0;;
+      14) sudo reboot;;
+      15) sudo poweroff;;
     esac
   fi
 done
