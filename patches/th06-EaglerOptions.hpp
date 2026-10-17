@@ -222,7 +222,7 @@ inline u16 BrowserKeyboardBits()
         const pulse = Module.eaglerControls.keyboardPulseBits | 0;
         Module.eaglerControls.keyboardPulseBits = 0;
         return held | pulse;
-    })) != 0;
+    }));
 #else
     return 0;
 #endif
