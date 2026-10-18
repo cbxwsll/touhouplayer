@@ -1,1 +1,1 @@
-PLACEHOLDER_BGM
+__BGM__
